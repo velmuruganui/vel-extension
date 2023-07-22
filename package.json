@@ -34,7 +34,7 @@
       ]
     },
     "commands": [{
-      "command": "vel-extension.helloWorld",
+      "command": "vel-extension.helloWorld", 
       "title": "Hello World"
     }]
   },
