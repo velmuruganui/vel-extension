@@ -6,49 +6,51 @@ const vscode = require('vscode');
 function activate(context) {
 	
 	let disposable = vscode.commands.registerCommand('vel-extension.helloWorld', function () {
-		const treeDataProvider = new MyTreeDataProvider();
-	    vscode.window.createTreeView('myExtension', { treeDataProvider });
+        let treeDataProvider = new InputFilesTreeDataProvider();
+		let treeView = vscode.window.createTreeView('inputFilesView', { treeDataProvider: treeDataProvider });
+		context.subscriptions.push(disposable, treeView);
 	});
-	context.subscriptions.push(disposable);
-
-}
-
-
-class MyTreeDataProvider {
-	getTreeItem(element) { 
-	  return element;
+	
+	class InputFilesTreeDataProvider {
+		getTreeItem(element) {
+			return {
+				label: element.label,
+				collapsibleState: element.collapsibleState,
+				command: element.command
+			};
+		}
+	
+		getChildren(element) {
+			if (!element) {
+				// Return the root level items
+				return [
+					{ label: 'input1.txt', collapsibleState: vscode.TreeItemCollapsibleState.None, command: { command: 'extension.openInputFile', title: 'Open File', arguments: ['input1.txt'] } },
+					{ label: 'input2.txt', collapsibleState: vscode.TreeItemCollapsibleState.None, command: { command: 'extension.openInputFile', title: 'Open File', arguments: ['input2.txt'] } }
+				];
+			} 
+			return [];
+		}
 	}
-  
-	getChildren(element) {
-	  const items = [
-		new MyTreeItem('Item 1'),
-		new MyTreeItem('Item 2'),
-		new MyTreeItem('Item 3'),
-	  ];
-  
-	  return Promise.resolve(items);
-	}
+
+} // End of activate function
+ 
+function openInputFile(filePath) {
+    vscode.workspace.openTextDocument(filePath).then(doc => {
+        vscode.window.showTextDocument(doc, { preview: false });
+    });
 }
-
-class MyTreeItem extends vscode.TreeItem {
-	constructor(label) {
-	  super(label, vscode.TreeItemCollapsibleState.None);
-	}
-}
-
-
 
 let panel = vscode.window.createWebviewPanel(
-    'webviewPanel', // Identifies the type of the webview. Used internally
-    'Webview Panel', // Title of the panel displayed to the user
-    vscode.ViewColumn.One, // Editor column to show the new webview panel in.
-    {} // Webview options. More on these later.
+    'webviewPanel', 
+    'Webview Panel', 
+    vscode.ViewColumn.One, 
+    {} 
 );
 
 // Set the HTML content of the webview panel
-panel.webview.html = '<html><body><h1>Hello, world!</h1></body></html>';
+panel.webview.html = '<html><body> <h1>Hello Worlddddddd!</h1> </body></html>';
 
-// This method is called when your extension is deactivated
+// This method is called when your extension is deactivated 
 function deactivate() {}
 
 module.exports = {
